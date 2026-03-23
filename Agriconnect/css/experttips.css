@@ -1,0 +1,130 @@
+/* Expert Tips page CSS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top, #f1fcf4 0%, #e0f4e8 40%, #f1fef6 100%);
+    color: #1b3e2f;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #2f7a34;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.15);
+    padding: 0.8rem 1rem;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    transition: background-color 0.2s ease;
+}
+
+nav ul li a:hover,
+nav ul li a:focus-visible {
+    background: rgba(255,255,255,0.2);
+}
+
+.section-title {
+    text-align: center;
+    margin: 2.2rem auto 1.2rem;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: #1a4d2e;
+    max-width: 840px;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.25rem;
+    padding: 0 1rem 1.2rem;
+    max-width: 1160px;
+    margin: 0 auto;
+}
+
+.card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(75, 156, 95, 0.25);
+    box-shadow: 0 10px 22px rgba(23, 81, 40, 0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(23, 81, 40, 0.2);
+}
+
+.card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 1rem;
+    text-align: left;
+}
+
+.card-content h3 {
+    margin-bottom: 0.65rem;
+    color: #24723d;
+    font-size: 1.2rem;
+}
+
+.card-content p {
+    color: #46695d;
+    line-height: 1.5;
+    font-size: 0.96rem;
+}
+
+footer {
+    background-color: #2f7a34;
+    color: #e9fbee;
+    text-align: center;
+    padding: 0.9rem 0.8rem;
+    margin-top: auto;
+    font-weight: 500;
+}
+
+@media (max-width: 680px) {
+    .section-title {
+        margin-top: 1.8rem;
+        font-size: 2rem;
+    }
+
+    .card img {
+        height: 150px;
+    }
+}

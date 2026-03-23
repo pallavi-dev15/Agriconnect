@@ -1,0 +1,120 @@
+/* Contact page CSS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(180deg, #f0fbf7 0%, #e0f6ec 50%, #f2fdf8 100%);
+    color: #1d4733;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    background: #2f7a34;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+    padding: 0.7rem 1rem;
+    z-index: 10;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    list-style: none;
+    flex-wrap: wrap;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.35rem 0.8rem;
+    border-radius: 20px;
+    transition: background 0.2s ease;
+}
+
+nav ul li a:hover,
+nav ul li a:focus-visible {
+    background: rgba(255,255,255,0.2);
+}
+
+.form-container {
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(66, 139, 94, 0.22);
+    border-radius: 16px;
+    box-shadow: 0 12px 25px rgba(21, 70, 40, 0.12);
+    max-width: 520px;
+    margin: 2rem auto 1.5rem;
+    padding: 1.5rem;
+}
+
+.form-container h2 {
+    text-align: center;
+    color: #1c5f3d;
+    margin-bottom: 1rem;
+}
+
+.form-container input,
+.form-container textarea {
+    width: 100%;
+    border: 1px solid #9ecea8;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 0.65rem 0 0.9rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form-container input:focus,
+.form-container textarea:focus {
+    border-color: #2f7a34;
+    box-shadow: 0 0 0 2px rgba(47, 122, 52, 0.18);
+}
+
+.form-container button {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    background: #68b96a;
+    color: #fdfdfb;
+    font-weight: 600;
+    padding: 11px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.form-container button:hover,
+.form-container button:focus-visible {
+    background: #2f7a34;
+    transform: translateY(-1px);
+}
+
+footer {
+    background: #2f7a34;
+    color: #e9fbee;
+    text-align: center;
+    padding: 0.8rem 0.7rem;
+    margin-top: auto;
+    font-weight: 500;
+    width: 100%;
+}
+
+@media (max-width: 620px) {
+    .form-container {
+        margin: 1.4rem 0.8rem;
+        padding: 1.1rem;
+    }
+}
