@@ -1,0 +1,128 @@
+/* Marketplace page CSS for Smart AgriConnect */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #eef6f0;
+    color: #1b3a2f;
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #2f7a34;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
+    padding: 0.8rem 1rem;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 1rem;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.45rem 0.8rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+nav ul li a:hover,
+nav ul li a:focus-visible {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+h2 {
+    text-align: center;
+    margin: 2.2rem 1rem 0.8rem;
+    color: #1f4f2a;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+    padding: 1.1rem;
+    max-width: 1140px;
+    margin: 0 auto 1.5rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid rgba(68, 123, 66, 0.18);
+    box-shadow: 0 10px 20px rgba(25, 83, 46, 0.08);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 16px 28px rgba(23, 86, 47, 0.15);
+}
+
+.card h3 {
+    margin: 1rem;
+    color: #1f4f2a;
+    font-size: 1.25rem;
+}
+
+.card p {
+    margin: 0 1rem 1rem;
+    color: #435d4f;
+}
+
+.card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+}
+
+.card .btn {
+    display: block;
+    margin: 0 1rem 1rem;
+    text-align: center;
+    padding: 0.6rem 0.9rem;
+    border-radius: 999px;
+    background: #68b96a;
+    color: #f5fff4;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card .btn:hover,
+.card .btn:focus-visible {
+    background: #2f7a34;
+    transform: scale(1.01);
+}
+
+footer {
+    background: #2f7a34;
+    color: #e9fbee;
+    text-align: center;
+    padding: 0.9rem 0.7rem;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+@media (max-width: 720px) {
+    h2 { margin-top: 1.4rem; }
+    .card-container { padding: 1rem; gap: 0.9rem; }
+}

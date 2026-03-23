@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Details | Smart AgriConnect</title>
+    <link rel="stylesheet" href="css/cropdetails.css">
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="weather.html">Weather</a></li>
+        <li><a href="blog.html">Expert Tips</a></li>
+        <li><a href="about.html">About</a></li>
+    </ul>
+</nav>
+
+<main class="detail-section">
+    <h1 id="crop-title">Crop Name</h1>
+    <p class="subtitle" id="crop-subtitle">Best selection for your farm</p>
+
+    <div class="detail-card">
+        <img id="crop-image" src="" alt="Crop Image" />
+        <div class="detail-content">
+            <p><strong>Price:</strong> <span id="crop-price">-</span></p>
+            <p><strong>Location:</strong> <span id="crop-location">-</span></p>
+            <p><strong>Grade:</strong> <span id="crop-grade">-</span></p>
+            <p><strong>Quantity Available:</strong> <span id="crop-quantity">-</span></p>
+            <p><strong>Description:</strong> <span id="crop-desc">-</span></p>
+        </div>
+    </div>
+
+    <a href="marketplace.html" class="btn">Back to Marketplace</a>
+</main>
+
+<footer>© 2026 Smart AgriConnect</footer>
+
+<script>
+const cache = {
+    rice: {
+        title: 'Rice',
+        price: '₹25/kg',
+        location: 'Pune, Maharashtra',
+        grade: 'A+ (Premium)',
+        quantity: '1,500 kg',
+        desc: 'Fragrant long-grain rice, well-polished and direct from farm.',
+        img: 'rice.jpg'
+    },
+    wheat: {
+        title: 'Wheat',
+        price: '₹30/kg',
+        location: 'Indore, Madhya Pradesh',
+        grade: 'A',
+        quantity: '2,000 kg',
+        desc: 'High-protein wheat suitable for flour milling and bakery-grade production.',
+        img: 'wheat.jpg'
+    },
+    tomato: {
+        title: 'Tomato',
+        price: '₹20/kg',
+        location: 'Nashik, Maharashtra',
+        grade: 'Fresh Grade',
+        quantity: '1,800 kg',
+        desc: 'Juicy, bright-red tomatoes harvested in the last 24 hours.',
+        img: 'tomato.jpg'
+    }
+};
+
+function getQuery(key) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(key);
+}
+
+function renderCrop(cropKey) {
+    const crop = cache[cropKey] || null;
+    if (!crop) {
+        document.getElementById('crop-title').textContent = 'Crop details not found';
+        document.getElementById('crop-subtitle').textContent = 'Please return to marketplace and choose another crop.';
+        document.getElementById('crop-price').textContent = '-';
+        document.getElementById('crop-location').textContent = '-';
+        document.getElementById('crop-grade').textContent = '-';
+        document.getElementById('crop-quantity').textContent = '-';
+        document.getElementById('crop-desc').textContent = '-';
+        document.getElementById('crop-image').src = 'not-found.jpg';
+        document.getElementById('crop-image').alt = 'Not found';
+        return;
+    }
+
+    document.getElementById('crop-title').textContent = crop.title;
+    document.getElementById('crop-subtitle').textContent = `${crop.title} details and availability`;
+    document.getElementById('crop-price').textContent = crop.price;
+    document.getElementById('crop-location').textContent = crop.location;
+    document.getElementById('crop-grade').textContent = crop.grade;
+    document.getElementById('crop-quantity').textContent = crop.quantity;
+    document.getElementById('crop-desc').textContent = crop.desc;
+    document.getElementById('crop-image').src = crop.img;
+    document.getElementById('crop-image').alt = `${crop.title} image`;
+}
+
+const selectedCrop = getQuery('crop') || 'rice';
+renderCrop(selectedCrop.toLowerCase());
+</script>
+
+</body>
+</html>
