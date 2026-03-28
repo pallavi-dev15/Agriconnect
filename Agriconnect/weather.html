@@ -1,5 +1,4 @@
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,35 +20,40 @@
 </nav>
 
 <main class="weather-page">
-    <h1>Today's Weather</h1>
+    <h1>Weather Updates</h1>
 
+   
+    <div class="weather-box">
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+    </div>
+
+   
     <section class="weather-cards">
         <article class="weather-card">
             <h3>Temperature</h3>
-            <p>28°C</p>
+            <p id="temp">--°C</p>
         </article>
 
         <article class="weather-card">
             <h3>Humidity</h3>
-            <p>65%</p>
+            <p id="humidity">--%</p>
         </article>
 
         <article class="weather-card">
-            <h3>Rain Chances</h3>
-            <p>40%</p>
+            <h3>Condition</h3>
+            <img id="icon" src="" alt="weather icon">
+            <p id="condition">--</p>
         </article>
     </section>
 
-    <section class="weather-meta">
-        <p>Condition: Partly Cloudy</p>
-        <p>Wind: 9 km/h NE</p>
-        <p>Soil Moisture: Moderate</p>
-    </section>
+    <p id="error" class="error"></p>
 </main>
 
 <footer>
     © 2026 Smart AgriConnect
 </footer>
 
+<script src="script.js"></script>
 </body>
 </html>
