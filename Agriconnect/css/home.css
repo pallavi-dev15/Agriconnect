@@ -156,3 +156,51 @@ footer {
         font-size: 1rem;
     }
 }
+
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: 40px auto;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.slide {
+  display: none;
+}
+
+.slide img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+/* Fade animation */
+.fade {
+  animation: fadeEffect 1s;
+}
+
+@keyframes fadeEffect {
+  from {opacity: 0.4;}
+  to {opacity: 1;}
+}
+
+/* Buttons */
+.prev, .next {
+  position: absolute;
+  top: 50%;
+  padding: 10px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  background: rgba(0,0,0,0.5);
+  transform: translateY(-50%);
+  border-radius: 50%;
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }
+
+.prev:hover, .next:hover {
+  background: rgba(0,0,0,0.8);
+}
