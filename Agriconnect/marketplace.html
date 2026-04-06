@@ -19,23 +19,27 @@
 
 <h2 style="text-align:center; margin-top:30px;">Available Crops</h2>
 
+<section class="search-wrap" aria-label="Search crops">
+    <input type="search" id="market-search" placeholder="Search crop by name (example: rice)">
+</section>
+
 <section class="card-container">
 
-    <div class="card">
+    <div class="card" data-crop="rice">
         <h3>Rice</h3>
         <p>Price: ₹25/kg</p>
         <img src="rice.jpg" alt="Rice">
         <a href="cropdetails.html?crop=rice" class="btn">View Details</a>
     </div>
 
-    <div class="card">
+    <div class="card" data-crop="wheat">
         <h3>Wheat</h3>
         <p>Price: ₹30/kg</p>
         <img src="wheat.jpg" alt="Wheat">
         <a href="cropdetails.html?crop=wheat" class="btn">View Details</a>
     </div>
 
-    <div class="card">
+    <div class="card" data-crop="tomato">
         <h3>Tomato</h3>
         <p>Price: ₹20/kg</p>
         <img src="tomato.jpg" alt="Tomato">
@@ -44,9 +48,13 @@
 
 </section>
 
+<p id="market-empty-state" class="empty-state" hidden>No crop found for this search.</p>
+
 <footer>
     © 2026 Smart AgriConnect
 </footer>
+
+<script src="js/simple-features.js"></script>
 
 </body>
 </html>

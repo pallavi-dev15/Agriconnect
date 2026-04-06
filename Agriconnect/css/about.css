@@ -126,6 +126,46 @@ nav ul li a:focus-visible {
     color: #4e6f61;
 }
 
+.faq-section {
+    width: min(92%, 820px);
+    margin: 0.8rem auto 1.6rem;
+}
+
+.faq-section h3 {
+    color: #205c3a;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.faq-item {
+    background: #ffffff;
+    border: 1px solid rgba(75, 146, 88, 0.18);
+    border-radius: 12px;
+    margin-bottom: 0.7rem;
+    overflow: hidden;
+}
+
+.faq-question {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: #ffffff;
+    color: #1d4d33;
+    font-weight: 600;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+}
+
+.faq-question:hover,
+.faq-question:focus-visible {
+    background: #f2faf4;
+}
+
+.faq-answer {
+    padding: 0 1rem 0.9rem;
+    color: #456857;
+}
+
 footer {
     background: #2f7a34;
     color: #e9fbee;

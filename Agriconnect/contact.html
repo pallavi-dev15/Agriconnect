@@ -14,18 +14,28 @@
 
 <div class="form-container">
     <h2>Contact Us 📩</h2>
-    <form>
-        <input type="text" placeholder="Full Name" required>
-        <input type="email" placeholder="Email Address" required>
+    <form id="contact-form" novalidate>
+        <input type="text" id="contact-name" placeholder="Full Name" required>
+        <small class="field-error" id="contact-name-error"></small>
+
+        <input type="email" id="contact-email" placeholder="Email Address" required>
+        <small class="field-error" id="contact-email-error"></small>
+
         <input type="text" placeholder="Subject">
-        <textarea placeholder="Your Message" rows="4" style="width:100%; padding:10px; border-radius:8px;"></textarea>
+
+        <textarea id="contact-message" placeholder="Your Message" rows="4" required style="width:100%; padding:10px; border-radius:8px;"></textarea>
+        <small class="field-error" id="contact-message-error"></small>
+
         <button type="submit">Send Message</button>
+        <p id="contact-feedback" class="contact-feedback" aria-live="polite"></p>
     </form>
 </div>
 
 <footer>
     © 2026 Smart AgriConnect
 </footer>
+
+<script src="js/simple-features.js"></script>
 
 </body>
 </html>

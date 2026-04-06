@@ -54,6 +54,26 @@ h2 {
     font-size: clamp(1.8rem, 3vw, 2.5rem);
 }
 
+.search-wrap {
+    max-width: 520px;
+    margin: 0 auto 0.8rem;
+    padding: 0 1rem;
+}
+
+#market-search {
+    width: 100%;
+    border: 1px solid #8ec79a;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+#market-search:focus {
+    border-color: #2f7a34;
+    box-shadow: 0 0 0 3px rgba(47, 122, 52, 0.18);
+}
+
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -111,6 +131,13 @@ h2 {
 .card .btn:focus-visible {
     background: #2f7a34;
     transform: scale(1.01);
+}
+
+.empty-state {
+    text-align: center;
+    color: #365948;
+    font-weight: 500;
+    margin: 0.2rem 1rem 1rem;
 }
 
 footer {

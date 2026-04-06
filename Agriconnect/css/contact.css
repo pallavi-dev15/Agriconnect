@@ -84,6 +84,20 @@ nav ul li a:focus-visible {
     box-shadow: 0 0 0 2px rgba(47, 122, 52, 0.18);
 }
 
+.form-container .input-error {
+    border-color: #cf3f3f;
+    box-shadow: 0 0 0 2px rgba(207, 63, 63, 0.16);
+}
+
+.field-error {
+    display: block;
+    min-height: 1.1rem;
+    margin-top: -0.5rem;
+    margin-bottom: 0.4rem;
+    color: #b52929;
+    font-size: 0.84rem;
+}
+
 .form-container button {
     width: 100%;
     border: none;
@@ -100,6 +114,21 @@ nav ul li a:focus-visible {
 .form-container button:focus-visible {
     background: #2f7a34;
     transform: translateY(-1px);
+}
+
+.contact-feedback {
+    min-height: 1.1rem;
+    margin-top: 0.7rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.contact-feedback.error {
+    color: #b52929;
+}
+
+.contact-feedback.success {
+    color: #1f7338;
 }
 
 footer {
