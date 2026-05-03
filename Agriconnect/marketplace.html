@@ -3,6 +3,7 @@
 <head>
     <title>Crop Marketplace</title>
     <link rel="stylesheet" href="css/marketplace.css">
+    <link rel="stylesheet" href="css/simple-features.css">
 </head>
 <body>
 
@@ -17,36 +18,48 @@
     </ul>
 </nav>
 
-<h2 style="text-align:center; margin-top:30px;">Available Crops</h2>
+<main class="marketplace-page">
+    <h2>Available Crops</h2>
 
-<section class="card-container">
+    <section class="search-panel" aria-label="Search crops">
+        <label for="market-search">Search crops</label>
+        <input type="search" id="market-search" placeholder="Type rice, wheat, or tomato">
+        <p class="search-hint">Start typing to filter the crop cards below.</p>
+    </section>
 
-    <div class="card">
-        <h3>Rice</h3>
-        <p>Price: ₹25/kg</p>
-        <img src="rice.jpg" alt="Rice">
-        <a href="cropdetails.html?crop=rice" class="btn">View Details</a>
-    </div>
+    <p id="market-empty-state" class="empty-state" hidden>No crops match your search.</p>
 
-    <div class="card">
-        <h3>Wheat</h3>
-        <p>Price: ₹30/kg</p>
-        <img src="wheat.jpg" alt="Wheat">
-        <a href="cropdetails.html?crop=wheat" class="btn">View Details</a>
-    </div>
+    <section class="card-container">
 
-    <div class="card">
-        <h3>Tomato</h3>
-        <p>Price: ₹20/kg</p>
-        <img src="tomato.jpg" alt="Tomato">
-        <a href="cropdetails.html?crop=tomato" class="btn">View Details</a>
-    </div>
+        <div class="card" data-crop="rice">
+            <h3>Rice</h3>
+            <p>Price: ₹25/kg</p>
+            <img src="rice.jpg" alt="Rice">
+            <a href="cropdetails.html?crop=rice" class="btn">View Details</a>
+        </div>
 
-</section>
+        <div class="card" data-crop="wheat">
+            <h3>Wheat</h3>
+            <p>Price: ₹30/kg</p>
+            <img src="wheat.jpg" alt="Wheat">
+            <a href="cropdetails.html?crop=wheat" class="btn">View Details</a>
+        </div>
+
+        <div class="card" data-crop="tomato">
+            <h3>Tomato</h3>
+            <p>Price: ₹20/kg</p>
+            <img src="tomato.jpg" alt="Tomato">
+            <a href="cropdetails.html?crop=tomato" class="btn">View Details</a>
+        </div>
+
+    </section>
+</main>
 
 <footer>
     © 2026 Smart AgriConnect
 </footer>
+
+<script src="js/simple-features.js"></script>
 
 </body>
 </html>

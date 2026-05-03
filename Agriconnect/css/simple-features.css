@@ -1,0 +1,24 @@
+#js-back-to-top {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1000;
+    border: none;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    background: #2f7a34;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#js-back-to-top.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}

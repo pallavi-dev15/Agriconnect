@@ -3,6 +3,7 @@
 <head>
     <title>Contact Us</title>
     <link rel="stylesheet" href="css/contact.css">
+    <link rel="stylesheet" href="css/simple-features.css">
 </head>
 <body>
 
@@ -18,7 +19,8 @@
         <input type="text" placeholder="Full Name" required>
         <input type="email" placeholder="Email Address" required>
         <input type="text" placeholder="Subject">
-        <textarea placeholder="Your Message" rows="4" style="width:100%; padding:10px; border-radius:8px;"></textarea>
+        <textarea id="contact-message" maxlength="200" placeholder="Your Message" rows="4" style="width:100%; padding:10px; border-radius:8px;"></textarea>
+        <small id="contact-message-counter" class="char-counter" aria-live="polite">200 characters left</small>
         <button type="submit">Send Message</button>
     </form>
 </div>
@@ -29,6 +31,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="contact.js"></script>
+
+<script src="js/simple-features.js"></script>
 </body>
 </html>
 

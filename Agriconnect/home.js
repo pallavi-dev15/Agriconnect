@@ -16,20 +16,15 @@ $(document).ready(function(){
     index = (index - 1 + slides.length) % slides.length;
     showSlide(index);
   }
-
-  // Auto slideshow
   setInterval(nextSlide, 3000);
 
-  // Manual controls
   $(".next").click(nextSlide);
   $(".prev").click(prevSlide);
 
-  // Initial
   showSlide(index);
 });
 
 $(document).ready(function(){
-
   let mainText = "Connecting Farmers & Buyers";
   let subText = "Empowering Agriculture Digitally";
 
@@ -38,7 +33,6 @@ $(document).ready(function(){
 
   $("#mainText").text("");
   $("subText").text("");
-  
   function typeMain(){
     if(i < mainText.length){
       $("#mainText").css("opacity", "1");
@@ -49,7 +43,6 @@ $(document).ready(function(){
       setTimeout(typeSub, 300);
     }
   }
-
   function typeSub(){
     if(j < subText.length){
       $("#subText").css("opacity", "1");
@@ -58,6 +51,5 @@ $(document).ready(function(){
       setTimeout(typeSub, 50);
     }
   }
-
   typeMain();
 });

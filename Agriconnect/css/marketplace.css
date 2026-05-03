@@ -49,9 +49,57 @@ nav ul li a:focus-visible {
 
 h2 {
     text-align: center;
-    margin: 2.2rem 1rem 0.8rem;
+    margin: 2.2rem 1rem 1rem;
     color: #1f4f2a;
     font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.marketplace-page {
+    padding-bottom: 1rem;
+}
+
+.search-panel {
+    max-width: 760px;
+    margin: 0 auto 1rem;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+.search-panel label {
+    display: block;
+    margin-bottom: 0.55rem;
+    font-weight: 600;
+    color: #1f4f2a;
+}
+
+#market-search {
+    width: 100%;
+    max-width: 560px;
+    border: 1px solid #8ec79a;
+    border-radius: 999px;
+    padding: 0.9rem 1.05rem;
+    font-size: 1rem;
+    background: #ffffff;
+    outline: none;
+    box-shadow: 0 6px 16px rgba(25, 83, 46, 0.08);
+}
+
+#market-search:focus {
+    border-color: #2f7a34;
+    box-shadow: 0 0 0 3px rgba(47, 122, 52, 0.15);
+}
+
+.search-hint {
+    margin-top: 0.55rem;
+    color: #56715f;
+    font-size: 0.95rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: #365948;
+    font-weight: 600;
+    margin: 0 1rem 1rem;
 }
 
 .card-container {

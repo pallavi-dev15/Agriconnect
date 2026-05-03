@@ -84,6 +84,20 @@ nav ul li a:focus-visible {
     box-shadow: 0 0 0 2px rgba(47, 122, 52, 0.18);
 }
 
+.char-counter {
+    display: block;
+    margin-top: -0.3rem;
+    margin-bottom: 0.85rem;
+    color: #56715f;
+    font-size: 0.88rem;
+    text-align: right;
+}
+
+.char-counter.warning {
+    color: #b25a19;
+    font-weight: 600;
+}
+
 .form-container button {
     width: 100%;
     border: none;

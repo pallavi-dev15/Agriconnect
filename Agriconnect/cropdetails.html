@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crop Details | Smart AgriConnect</title>
     <link rel="stylesheet" href="css/cropdetails.css">
+    <link rel="stylesheet" href="css/simple-features.css">
 </head>
 <body>
 
@@ -103,6 +104,8 @@ function renderCrop(cropKey) {
 const selectedCrop = getQuery('crop') || 'rice';
 renderCrop(selectedCrop.toLowerCase());
 </script>
+
+<script src="js/simple-features.js"></script>
 
 </body>
 </html>
