@@ -1,22 +1,42 @@
+<?php
+session_start();
+
+// Check if user logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Smart AgriConnect</title>
+    <meta charset="UTF-8">
+    <title>Dashboard - Smart AgriConnect</title>
     <link rel="stylesheet" href="css/home.css">
-  <link rel="stylesheet" href="css/simple-features.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
 
 <nav>
     <ul>
-        <li><a href="index.html">Home</a></li><li><a href="marketplace.html">Marketplace</a></li><li><a href="about.html">About</a></li><li><a href="weather.html">Weather</a></li><li><a href="blog.html">Expert Tips</a></li>
+        <li><a href="dashboard.php">Dashboard</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="weather.html">Weather</a></li>
+        <li><a href="blog.html">Expert Tips</a></li>
         <li><a href="contact.html">Contact</a></li>
+        <li><a href="logout.php" style="background-color: #d9534f; border-radius: 999px; padding: 0.45rem 0.8rem;">Logout</a></li>
     </ul>
 </nav>
 
 <section class="hero">
-    <h1 id="mainText"></h1>
-    <p id="subText"></p>
+    <div class="welcome-box">
+        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
+        <p>Your Smart Farming Dashboard</p>
+    </div>
+
+    <!-- Main button -->
     <a href="marketplace.html" class="btn">Explore Crops</a>
 </section>
 
@@ -38,7 +58,6 @@
 </section>
 
 <div class="slideshow-container">
-
   <div class="slide fade">
     <img src="pic1.jpeg" width="100%">
   </div>
@@ -62,7 +81,6 @@
   <!-- Buttons -->
   <a class="prev">&#10094;</a>
   <a class="next">&#10095;</a>
-
 </div>
 
 <footer>
@@ -70,13 +88,8 @@
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script src="home.js">
-
-</script>
-
+<script src="home.js"></script>
 <script src="js/simple-features.js"></script>
 
 </body>
 </html>
-

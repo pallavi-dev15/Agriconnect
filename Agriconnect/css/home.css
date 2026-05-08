@@ -58,6 +58,7 @@ nav ul li a:focus-visible {
     text-align: center;
     color: #fff;
     padding: 2.2rem 1rem;
+    position: relative;
 }
 
 .hero h1 {
@@ -218,4 +219,23 @@ footer {
     0%, 50%, 100% {opacity: 1;}
     25%, 75% {opacity: 0;}
     
+}
+/* Position login button above everything */
+.top-login {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
+
+.login-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-btn:hover {
+    background-color: #388E3C;
 }
