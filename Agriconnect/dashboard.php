@@ -41,11 +41,11 @@ $usertype = $_SESSION['usertype'];
     <ul>
         <li><a href="dashboard.php">Dashboard</a></li>
         <?php if ($usertype === 'farmer'): ?>
-            <li><a href="marketplace.html">My Listings</a></li>
-            <li><a href="cropdetails.html">Crop Management</a></li>
+            <li><a href="mylistings.php">My Listings</a></li>
+            <li><a href="myorders.php">My Orders</a></li>
         <?php else: ?>
-            <li><a href="marketplace.html">Browse Products</a></li>
-            <li><a href="marketplace.html">My Orders</a></li>
+            <li><a href="marketplace.php">Browse Products</a></li>
+            <li><a href="myorders.php">My Orders</a></li>
         <?php endif; ?>
         <li><a href="about.html">About</a></li>
         <li><a href="weather.html">Weather</a></li>
@@ -65,13 +65,18 @@ $usertype = $_SESSION['usertype'];
             </h1>
             <p>Manage Your Farm & Sell Your Crops</p>
         </div>
-        <a href="marketplace.html" class="btn">List New Crop</a>
+        <a href="mylistings.php" class="btn">Manage My Crops</a>
     </section>
 
     <section class="card-container">
-        <div class="card">
+        <div class="card" onclick="window.location.href='mylistings.php'" style="cursor: pointer;">
             <h3>📋 My Crop Listings</h3>
             <p>Manage and monitor your active crop listings in the marketplace.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='myorders.php'" style="cursor: pointer;">
+            <h3>📦 My Orders</h3>
+            <p>Track and manage incoming orders from buyers.</p>
         </div>
 
         <div class="card">
@@ -85,13 +90,8 @@ $usertype = $_SESSION['usertype'];
         </div>
 
         <div class="card">
-            <h3>📞 Customer Inquiries</h3>
-            <p>Respond to buyer inquiries and manage negotiations.</p>
-        </div>
-
-        <div class="card">
-            <h3>📊 Growing Tips</h3>
-            <p>Get expert advice for better crop yield and quality.</p>
+            <h3>📞 Customer Support</h3>
+            <p>Communicate with buyers and manage their inquiries.</p>
         </div>
 
         <div class="card">
@@ -110,16 +110,16 @@ $usertype = $_SESSION['usertype'];
             </h1>
             <p>Find the Best Quality Products from Local Farmers</p>
         </div>
-        <a href="marketplace.html" class="btn">Explore Products</a>
+        <a href="marketplace.php" class="btn">Explore Products</a>
     </section>
 
     <section class="card-container">
-        <div class="card">
+        <div class="card" onclick="window.location.href='marketplace.php'" style="cursor: pointer;">
             <h3>🛒 Browse Products</h3>
             <p>Discover fresh produce and agricultural products from local farmers.</p>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="window.location.href='myorders.php'" style="cursor: pointer;">
             <h3>📦 My Orders</h3>
             <p>View order history and track current deliveries.</p>
         </div>
