@@ -2,10 +2,12 @@
 session_start();
 
 // Check if user logged in
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) || !isset($_SESSION['usertype'])) {
     header("Location: login.php");
     exit();
 }
+
+$usertype = $_SESSION['usertype'];
 ?>
 
 <!DOCTYPE html>
@@ -15,13 +17,36 @@ if (!isset($_SESSION['username'])) {
     <title>Dashboard - Smart AgriConnect</title>
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        .farmer-badge {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .buyer-badge {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+    </style>
 </head>
 <body>
 
 <nav>
     <ul>
         <li><a href="dashboard.php">Dashboard</a></li>
-        <li><a href="marketplace.html">Marketplace</a></li>
+        <?php if ($usertype === 'farmer'): ?>
+            <li><a href="marketplace.html">My Listings</a></li>
+            <li><a href="cropdetails.html">Crop Management</a></li>
+        <?php else: ?>
+            <li><a href="marketplace.html">Browse Products</a></li>
+            <li><a href="marketplace.html">My Orders</a></li>
+        <?php endif; ?>
         <li><a href="about.html">About</a></li>
         <li><a href="weather.html">Weather</a></li>
         <li><a href="blog.html">Expert Tips</a></li>
@@ -30,32 +55,97 @@ if (!isset($_SESSION['username'])) {
     </ul>
 </nav>
 
-<section class="hero">
-    <div class="welcome-box">
-        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-        <p>Your Smart Farming Dashboard</p>
-    </div>
+<?php if ($usertype === 'farmer'): ?>
+    <!-- FARMER DASHBOARD -->
+    <section class="hero">
+        <div class="welcome-box">
+            <h1>
+                Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!
+                <span class="role-badge farmer-badge">Farmer</span>
+            </h1>
+            <p>Manage Your Farm & Sell Your Crops</p>
+        </div>
+        <a href="marketplace.html" class="btn">List New Crop</a>
+    </section>
 
-    <!-- Main button -->
-    <a href="marketplace.html" class="btn">Explore Crops</a>
-</section>
+    <section class="card-container">
+        <div class="card">
+            <h3>📋 My Crop Listings</h3>
+            <p>Manage and monitor your active crop listings in the marketplace.</p>
+        </div>
 
-<section class="card-container">
-    <div class="card">
-        <h3>Sell Crops</h3>
-        <p>Farmers can list crops easily.</p>
-    </div>
+        <div class="card">
+            <h3>💰 Sales Analytics</h3>
+            <p>Track your sales performance and earnings over time.</p>
+        </div>
 
-    <div class="card">
-        <h3>Buy Direct</h3>
-        <p>Buyers can purchase from farmers.</p>
-    </div>
+        <div class="card">
+            <h3>🌾 Crop Management</h3>
+            <p>Add, edit, or remove crops from your inventory.</p>
+        </div>
 
-    <div class="card">
-        <h3>Expert Advice</h3>
-        <p>Get seasonal farming guidance.</p>
-    </div>
-</section>
+        <div class="card">
+            <h3>📞 Customer Inquiries</h3>
+            <p>Respond to buyer inquiries and manage negotiations.</p>
+        </div>
+
+        <div class="card">
+            <h3>📊 Growing Tips</h3>
+            <p>Get expert advice for better crop yield and quality.</p>
+        </div>
+
+        <div class="card">
+            <h3>🌤️ Weather Forecast</h3>
+            <p>Plan your farming activities with accurate weather data.</p>
+        </div>
+    </section>
+
+<?php else: ?>
+    <!-- BUYER DASHBOARD -->
+    <section class="hero">
+        <div class="welcome-box">
+            <h1>
+                Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!
+                <span class="role-badge buyer-badge">Buyer</span>
+            </h1>
+            <p>Find the Best Quality Products from Local Farmers</p>
+        </div>
+        <a href="marketplace.html" class="btn">Explore Products</a>
+    </section>
+
+    <section class="card-container">
+        <div class="card">
+            <h3>🛒 Browse Products</h3>
+            <p>Discover fresh produce and agricultural products from local farmers.</p>
+        </div>
+
+        <div class="card">
+            <h3>📦 My Orders</h3>
+            <p>View order history and track current deliveries.</p>
+        </div>
+
+        <div class="card">
+            <h3>❤️ Saved Items</h3>
+            <p>Keep your favorite products for quick access.</p>
+        </div>
+
+        <div class="card">
+            <h3>👨‍🌾 Connect with Farmers</h3>
+            <p>Direct messaging with farmers for bulk orders and inquiries.</p>
+        </div>
+
+        <div class="card">
+            <h3>⭐ Reviews & Ratings</h3>
+            <p>Share your feedback and read other buyers' experiences.</p>
+        </div>
+
+        <div class="card">
+            <h3>💵 Payment Methods</h3>
+            <p>Manage your payment options and transaction history.</p>
+        </div>
+    </section>
+
+<?php endif; ?>
 
 <div class="slideshow-container">
   <div class="slide fade">

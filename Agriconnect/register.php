@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Login - Smart AgriConnect</title>
+    <title>Register - Smart AgriConnect</title>
     <style>
         body {
             margin: 0;
@@ -12,9 +12,9 @@
             background: linear-gradient(to right, #4CAF50, #2E7D32);
         }
 
-        .login-box {
+        .register-box {
             width: 400px;
-            margin: 80px auto;
+            margin: 50px auto;
             background: white;
             padding: 30px;
             border-radius: 10px;
@@ -40,7 +40,9 @@
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="email"],
+        input[type="password"],
+        select {
             width: 100%;
             padding: 12px;
             margin-bottom: 10px;
@@ -51,7 +53,9 @@
         }
 
         input[type="text"]:focus,
-        input[type="password"]:focus {
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        select:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
@@ -110,18 +114,18 @@
             border-radius: 5px;
         }
 
-        .register-link {
+        .login-link {
             margin-top: 20px;
             text-align: center;
         }
 
-        .register-link a {
+        .login-link a {
             color: #4CAF50;
             text-decoration: none;
             font-weight: bold;
         }
 
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
         }
     </style>
@@ -129,40 +133,77 @@
 
 <body>
 
-<div class="login-box">
-    <h2>Welcome to AgriConnect</h2>
+<div class="register-box">
+    <h2>Create Your Account</h2>
+    <p style="color: #666; margin-bottom: 25px;">Join AgriConnect Today</p>
 
-    <form action="authenticate.php" method="POST">
+    <form action="register_process.php" method="POST">
+        <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            <input type="text" id="username" name="username" placeholder="Choose a username" required>
         </div>
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <input type="password" id="password" name="password" placeholder="Enter a strong password" required>
         </div>
 
-        <div class="radio-group">
-            <label><input type="radio" name="usertype" value="farmer" required> Farmer</label>
-            <label><input type="radio" name="usertype" value="buyer" required> Buyer</label>
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter your password" required>
         </div>
 
-        <button type="submit">Login</button>
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location/City</label>
+            <input type="text" id="location" name="location" placeholder="Enter your city or location" required>
+        </div>
+
+        <div class="form-group">
+            <label>I am registering as:</label>
+            <div class="radio-group" style="padding: 15px; background: #f5f5f5;">
+                <label><input type="radio" name="usertype" value="farmer" required> Farmer</label>
+                <label><input type="radio" name="usertype" value="buyer" required> Buyer</label>
+            </div>
+        </div>
+
+        <button type="submit">Create Account</button>
     </form>
+
+    <div class="login-link">
+        <p>Already have an account? <a href="login.php">Login here</a></p>
+    </div>
 
     <?php
     if(isset($_GET['error'])){
-        echo "<p class='error-message'>Invalid username, password, or user type</p>";
+        if($_GET['error'] == 'username_exists'){
+            echo "<p class='error-message'>Username already exists. Please choose a different one.</p>";
+        } else if($_GET['error'] == 'email_exists'){
+            echo "<p class='error-message'>Email already registered. Please use a different email.</p>";
+        } else if($_GET['error'] == 'password_mismatch'){
+            echo "<p class='error-message'>Passwords do not match.</p>";
+        } else {
+            echo "<p class='error-message'>Registration failed. Please try again.</p>";
+        }
     }
     if(isset($_GET['success'])){
         echo "<p class='success-message'>Account created successfully! You can now login.</p>";
     }
     ?>
-
-    <div class="register-link">
-        <p>Don't have an account? <a href="register.php">Register here</a></p>
-    </div>
 </div>
 
 </body>
