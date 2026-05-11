@@ -478,6 +478,7 @@
 
 <script>
 var currentOrderData = {};
+var latestSearchRequest = 0;
 
 // XMLHttpRequest wrapper function
 function makeRequest(method, url, callback, data = null) {
@@ -525,7 +526,13 @@ function showMessage(text, type = 'success') {
 
 // Load crops
 function loadCrops() {
+    var requestId = ++latestSearchRequest;
+
     makeRequest('GET', 'api_get_crops.php', function(err, xmlDoc) {
+        if (requestId !== latestSearchRequest) {
+            return;
+        }
+
         var container = document.getElementById('cropsContainer');
         
         if (err) {
@@ -590,16 +597,21 @@ function createCropCard(cropXML) {
 // Search crops
 function searchCrops() {
     var query = document.getElementById('searchInput').value.trim();
-    
+
     if (!query) {
-        showMessage('Please enter a search term', 'info');
+        loadCrops();
         return;
     }
 
+    var requestId = ++latestSearchRequest;
     var container = document.getElementById('cropsContainer');
     container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Searching...</p></div>';
 
     makeRequest('GET', 'api_search_crops.php?query=' + encodeURIComponent(query), function(err, xmlDoc) {
+        if (requestId !== latestSearchRequest) {
+            return;
+        }
+
         if (err) {
             container.innerHTML = '<div class="no-results">Error searching crops</div>';
             return;
@@ -627,6 +639,8 @@ function clearSearch() {
     document.getElementById('searchInput').value = '';
     loadCrops();
 }
+
+document.getElementById('searchInput').addEventListener('input', searchCrops);
 
 // Modal functions
 function openOrderModal(cropId, cropName, price, quantity) {
