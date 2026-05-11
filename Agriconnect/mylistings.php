@@ -17,10 +17,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $grade = trim($_POST['grade'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $description = trim($_POST['description'] ?? '');
+    $image_url = '';
 
     if ($crop_name !== '' && $price > 0 && $quantity > 0) {
-        $stmt = $conn->prepare('INSERT INTO crops (farmer_id, crop_name, price, quantity, grade, location, description) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('isdisss', $farmer_id, $crop_name, $price, $quantity, $grade, $location, $description);
+        if (!empty($_FILES['image']['name'])) {
+            $uploadDir = __DIR__ . '/uploads/crops/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $imageInfo = pathinfo($_FILES['image']['name']);
+            $extension = strtolower($imageInfo['extension'] ?? '');
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            if (in_array($extension, $allowed, true)) {
+                $targetName = uniqid('crop_', true) . '.' . $extension;
+                $targetFile = $uploadDir . $targetName;
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+                    $image_url = 'uploads/crops/' . $targetName;
+                }
+            }
+        }
+
+        $stmt = $conn->prepare('INSERT INTO crops (farmer_id, crop_name, price, quantity, grade, location, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->bind_param('isdiisss', $farmer_id, $crop_name, $price, $quantity, $grade, $location, $description, $image_url);
         if ($stmt->execute()) {
             $message = '<div class="message success">Crop added successfully!</div>';
         } else {
@@ -56,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
-    header('Content-Type: application/json; charset=utf-8');
+    header('Content-Type: application/xml; charset=utf-8');
 
     $crop_id = intval($_POST['crop_id'] ?? 0);
     $crop_name = trim($_POST['crop_name'] ?? '');
@@ -65,13 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $grade = trim($_POST['grade'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $description = trim($_POST['description'] ?? '');
+    $image_url = '';
+
+    $response = new SimpleXMLElement('<?xml version="1.0"?><response/>');
 
     if ($crop_id <= 0 || $crop_name === '' || $price <= 0 || $quantity <= 0) {
-        echo json_encode(['success' => false, 'message' => 'Invalid input']);
+        $response->addChild('success', 'false');
+        $response->addChild('message', 'Invalid input');
+        echo $response->asXML();
         exit();
     }
 
-    $check = $conn->prepare('SELECT farmer_id FROM crops WHERE id = ?');
+    $check = $conn->prepare('SELECT farmer_id, image_url FROM crops WHERE id = ?');
     $check->bind_param('i', $crop_id);
     $check->execute();
     $result = $check->get_result();
@@ -79,24 +102,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $check->close();
 
     if (!$row || (int)$row['farmer_id'] !== (int)$farmer_id) {
-        echo json_encode(['success' => false, 'message' => 'Crop not found or unauthorized']);
+        $response->addChild('success', 'false');
+        $response->addChild('message', 'Crop not found or unauthorized');
+        echo $response->asXML();
         exit();
     }
 
-    $stmt = $conn->prepare('UPDATE crops SET crop_name = ?, price = ?, quantity = ?, grade = ?, location = ?, description = ? WHERE id = ? AND farmer_id = ?');
-    $stmt->bind_param('sdisssii', $crop_name, $price, $quantity, $grade, $location, $description, $crop_id, $farmer_id);
+    $image_url = $row['image_url'] ?? '';
+    if (!empty($_FILES['image']['name'])) {
+        $uploadDir = __DIR__ . '/uploads/crops/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        $imageInfo = pathinfo($_FILES['image']['name']);
+        $extension = strtolower($imageInfo['extension'] ?? '');
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array($extension, $allowed, true)) {
+            $targetName = uniqid('crop_', true) . '.' . $extension;
+            $targetFile = $uploadDir . $targetName;
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+                $image_url = 'uploads/crops/' . $targetName;
+            }
+        }
+    }
+
+    $stmt = $conn->prepare('UPDATE crops SET crop_name = ?, price = ?, quantity = ?, grade = ?, location = ?, description = ?, image_url = ? WHERE id = ? AND farmer_id = ?');
+    $stmt->bind_param('sdissssii', $crop_name, $price, $quantity, $grade, $location, $description, $image_url, $crop_id, $farmer_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Crop updated successfully']);
+        $response->addChild('success', 'true');
+        $response->addChild('message', 'Crop updated successfully');
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to update crop']);
+        $response->addChild('success', 'false');
+        $response->addChild('message', 'Failed to update crop');
     }
     $stmt->close();
     $conn->close();
+    echo $response->asXML();
     exit();
 }
 
-$stmt = $conn->prepare('SELECT id, crop_name, price, quantity, grade, location, description FROM crops WHERE farmer_id = ? ORDER BY created_at DESC');
+$stmt = $conn->prepare('SELECT id, crop_name, price, quantity, grade, location, description, image_url FROM crops WHERE farmer_id = ? ORDER BY created_at DESC');
 $stmt->bind_param('i', $farmer_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -159,7 +205,7 @@ $result = $stmt->get_result();
 
     <div class="form-box">
         <h2>Add New Crop</h2>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="add">
             <label>Crop Name *</label>
             <input type="text" name="crop_name" required>
@@ -173,6 +219,8 @@ $result = $stmt->get_result();
             <input type="text" name="location" placeholder="e.g., Pune, Maharashtra">
             <label>Description</label>
             <textarea name="description" rows="3" placeholder="Describe your crop..."></textarea>
+            <label>Image</label>
+            <input type="file" name="image" accept="image/*">
             <button type="submit">Add Crop</button>
         </form>
     </div>
@@ -184,6 +232,11 @@ $result = $stmt->get_result();
         <?php else: ?>
             <?php while ($crop = $result->fetch_assoc()): ?>
                 <div class="crop-item">
+                    <?php if (!empty($crop['image_url'])): ?>
+                        <div style="margin-bottom: 12px; text-align: center;">
+                            <img src="<?php echo htmlspecialchars($crop['image_url']); ?>" alt="<?php echo htmlspecialchars($crop['crop_name']); ?>" style="max-width: 100%; max-height: 200px; object-fit: cover; border-radius: 5px;" />
+                        </div>
+                    <?php endif; ?>
                     <h3><?php echo htmlspecialchars($crop['crop_name']); ?></h3>
                     <div class="crop-info">
                         ₹<?php echo htmlspecialchars($crop['price']); ?>/kg | <?php echo htmlspecialchars($crop['quantity']); ?> kg | <?php echo htmlspecialchars($crop['grade']); ?> | <?php echo htmlspecialchars($crop['location']); ?>
@@ -197,7 +250,8 @@ $result = $stmt->get_result();
                             data-quantity="<?php echo (int)$crop['quantity']; ?>"
                             data-grade="<?php echo htmlspecialchars($crop['grade'], ENT_QUOTES); ?>"
                             data-location="<?php echo htmlspecialchars($crop['location'], ENT_QUOTES); ?>"
-                            data-description="<?php echo htmlspecialchars($crop['description'], ENT_QUOTES); ?>">Update</button>
+                            data-description="<?php echo htmlspecialchars($crop['description'], ENT_QUOTES); ?>"
+                            data-image="<?php echo htmlspecialchars($crop['image_url'], ENT_QUOTES); ?>">Update</button>
                         <form method="POST" style="display: inline;">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="crop_id" value="<?php echo (int)$crop['id']; ?>">
@@ -231,6 +285,10 @@ $result = $stmt->get_result();
             <input type="text" id="update_location" placeholder="e.g., Pune, Maharashtra">
             <label>Description</label>
             <textarea id="update_description" rows="3" placeholder="Describe your crop..."></textarea>
+            <label>Replace Image</label>
+            <input type="file" id="update_image" accept="image/*">
+            <p style="font-size: 12px; color: #666; margin-top: 4px;">Leave blank to keep the current image.</p>
+            <div id="updateImagePreview" style="margin-top: 12px;"></div>
             <div style="margin-top: 15px;">
                 <button type="submit">Save Changes</button>
                 <button type="button" onclick="closeUpdateModal()" style="background: #666; margin-left: 10px;">Cancel</button>
@@ -250,6 +308,19 @@ updateButtons.forEach(function(button) {
         document.getElementById('update_grade').value = this.dataset.grade;
         document.getElementById('update_location').value = this.dataset.location;
         document.getElementById('update_description').value = this.dataset.description;
+        document.getElementById('update_image').value = '';
+        var previewContainer = document.getElementById('updateImagePreview');
+        previewContainer.innerHTML = '';
+        if (this.dataset.image) {
+            var previewImage = document.createElement('img');
+            previewImage.src = this.dataset.image;
+            previewImage.alt = this.dataset.name;
+            previewImage.style.maxWidth = '100%';
+            previewImage.style.maxHeight = '180px';
+            previewImage.style.objectFit = 'cover';
+            previewImage.style.borderRadius = '5px';
+            previewContainer.appendChild(previewImage);
+        }
         document.getElementById('updateModal').classList.add('active');
     });
 });
@@ -270,23 +341,32 @@ document.getElementById('updateForm').addEventListener('submit', function(e) {
     formData.append('grade', document.getElementById('update_grade').value);
     formData.append('location', document.getElementById('update_location').value);
     formData.append('description', document.getElementById('update_description').value);
+    var imageFile = document.getElementById('update_image').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'mylistings.php', true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             var xmlDoc = xhr.responseXML;
-            var success = xmlDoc.getElementsByTagName('success')[0].textContent;
-            if (success === 'true') {
-                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+            if (!xmlDoc) {
+                alert('Error updating crop. Invalid response.');
+                return;
+            }
+            var successNode = xmlDoc.getElementsByTagName('success')[0];
+            var messageNode = xmlDoc.getElementsByTagName('message')[0];
+            var success = successNode && successNode.textContent === 'true';
+            var msg = messageNode ? messageNode.textContent : 'Error updating crop';
+            if (success) {
                 alert(msg);
                 closeUpdateModal();
                 setTimeout(function() {
                     location.reload();
                 }, 100);
             } else {
-                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
-                alert(msg || 'Error updating crop');
+                alert(msg);
             }
         }
     };
