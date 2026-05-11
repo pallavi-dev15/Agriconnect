@@ -426,48 +426,6 @@
 var currentOrderId = null;
 var userType = null;
 
-// XMLHttpRequest wrapper function
-function makeRequest(method, url, callback, data = null) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                try {
-                    var xmlDoc = xhr.responseXML;
-                    callback(null, xmlDoc);
-                } catch (e) {
-                    callback(e, null);
-                }
-            } else {
-                callback(new Error("HTTP " + xhr.status), null);
-            }
-        }
-    };
-
-    xhr.onerror = function() {
-        callback(new Error("Network error"), null);
-    };
-
-    xhr.open(method, url, true);
-    
-    if (method === 'POST') {
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send(data);
-    } else {
-        xhr.send();
-    }
-}
-
-// Detect user type from session (check HTML for hidden element or use PHP)
-function detectUserType() {
-    // Make a simple request to determine user type
-    makeRequest('GET', 'api_get_orders.php', function(err, xmlDoc) {
-        if (!err) {
-            userType = xmlDoc.getElementsByTagName('orders').length > 0 ? 'farmer' : 'buyer';
-        }
-    });
-}
-
 // Show message
 function showMessage(text, type = 'success') {
     var msgDiv = document.getElementById('message');
@@ -482,95 +440,85 @@ function showMessage(text, type = 'success') {
 
 // Load orders
 function loadOrders() {
-    makeRequest('GET', 'api_get_orders.php', function(err, xmlDoc) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'api_get_orders.php', true);
+    xhr.onload = function() {
         var container = document.getElementById('ordersContainer');
         
-        if (err) {
+        if (xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            
+            if (!json.success || !json.orders || json.orders.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No orders yet</h3><p>Start by browsing crops and placing an order</p></div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            json.orders.forEach(function(order) {
+                var orderElement = createOrderElement(order);
+                container.appendChild(orderElement);
+            });
+        } else {
             container.innerHTML = '<div class="empty-state"><h3>Error loading orders</h3></div>';
-            return;
         }
-
-        var orders = xmlDoc.getElementsByTagName('order');
-        
-        if (orders.length === 0) {
-            container.innerHTML = '<div class="empty-state"><h3>No orders yet</h3><p>Start by browsing crops and placing an order</p></div>';
-            return;
-        }
-
-        container.innerHTML = '';
-        
-        for (var i = 0; i < orders.length; i++) {
-            var order = orders[i];
-            var orderElement = createOrderElement(order);
-            container.appendChild(orderElement);
-        }
-    });
+    };
+    xhr.onerror = function() {
+        document.getElementById('ordersContainer').innerHTML = '<div class="empty-state"><h3>Error loading orders</h3></div>';
+    };
+    xhr.send();
 }
 
-// Create order element
-function createOrderElement(orderXML) {
-    var id = orderXML.getElementsByTagName('id')[0].textContent;
-    var cropName = orderXML.getElementsByTagName('crop_name')[0].textContent;
-    var quantity = orderXML.getElementsByTagName('quantity')[0].textContent;
-    var totalPrice = orderXML.getElementsByTagName('total_price')[0].textContent;
-    var status = orderXML.getElementsByTagName('order_status')[0].textContent;
-    var orderDate = orderXML.getElementsByTagName('order_date')[0].textContent;
-    var deliveryAddress = orderXML.getElementsByTagName('delivery_address')[0].textContent;
-    
-    // Check if farmer-specific fields exist
-    var farmerName = orderXML.getElementsByTagName('farmer_name')[0];
-    var notes = orderXML.getElementsByTagName('notes')[0];
-
+// Create order element from JSON object
+function createOrderElement(order) {
     var div = document.createElement('div');
     div.className = 'order-item';
 
     var headerHTML = '<div class="order-header">' +
-                     '<div class="order-id">Order #' + id + '</div>' +
-                     '<div class="order-status status-' + status + '">' + status + '</div>' +
+                     '<div class="order-id">Order #' + order.id + '</div>' +
+                     '<div class="order-status status-' + order.order_status + '">' + order.order_status + '</div>' +
                      '</div>';
 
     var detailsHTML = '<div class="order-details">' +
                       '<div class="detail-item">' +
                       '<div class="detail-label">Crop</div>' +
-                      '<div class="detail-value">' + cropName + '</div>' +
+                      '<div class="detail-value">' + order.crop_name + '</div>' +
                       '</div>' +
                       '<div class="detail-item">' +
                       '<div class="detail-label">Quantity</div>' +
-                      '<div class="detail-value">' + quantity + ' kg</div>' +
+                      '<div class="detail-value">' + order.quantity + ' kg</div>' +
                       '</div>' +
                       '<div class="detail-item">' +
                       '<div class="detail-label">Total Price</div>' +
-                      '<div class="detail-value">₹' + totalPrice + '</div>' +
+                      '<div class="detail-value">₹' + order.total_price + '</div>' +
                       '</div>' +
                       '<div class="detail-item">' +
                       '<div class="detail-label">Order Date</div>' +
-                      '<div class="detail-value">' + new Date(orderDate).toLocaleDateString() + '</div>' +
+                      '<div class="detail-value">' + new Date(order.order_date).toLocaleDateString() + '</div>' +
                       '</div>';
 
-    if (farmerName) {
+    if (order.farmer_name) {
         detailsHTML += '<div class="detail-item">' +
                        '<div class="detail-label">Farmer</div>' +
-                       '<div class="detail-value">' + farmerName.textContent + '</div>' +
+                       '<div class="detail-value">' + order.farmer_name + '</div>' +
                        '</div>';
     }
 
     detailsHTML += '</div>';
 
     var addressHTML = '<div class="order-description">' +
-                      '<strong>Delivery Address:</strong> ' + deliveryAddress + '</div>';
+                      '<strong>Delivery Address:</strong> ' + order.delivery_address + '</div>';
 
     var notesHTML = '';
-    if (notes && notes.textContent) {
+    if (order.notes) {
         notesHTML = '<div class="order-description">' +
-                    '<strong>Special Notes:</strong> ' + notes.textContent + '</div>';
+                    '<strong>Special Notes:</strong> ' + order.notes + '</div>';
     }
 
     var actionsHTML = '<div class="order-actions">';
     
-    // Show update status button only for farmers
-    if (!farmerName) {
-        // This is farmer view, show update status button
-        actionsHTML += '<button class="btn btn-secondary" onclick="openStatusModal(' + id + ')">Update Status</button>';
+    // Show update status button only for farmers (no farmer_name means farmer view)
+    if (!order.farmer_name) {
+        actionsHTML += '<button class="btn btn-secondary" onclick="openStatusModal(' + order.id + ')">Update Status</button>';
     }
     
     actionsHTML += '</div>';
@@ -603,26 +551,30 @@ function submitStatusUpdate(event) {
         return;
     }
 
-    var params = 'order_id=' + encodeURIComponent(currentOrderId) +
-                 '&status=' + encodeURIComponent(newStatus);
+    var formData = new FormData();
+    formData.append('order_id', currentOrderId);
+    formData.append('status', newStatus);
 
-    makeRequest('POST', 'api_update_order_status.php', function(err, xmlDoc) {
-        if (err) {
-            showMessage('Error updating status', 'error');
-            return;
-        }
-
-        var success = xmlDoc.getElementsByTagName('success')[0].textContent;
-        var message = xmlDoc.getElementsByTagName('message')[0].textContent;
-
-        if (success === 'true') {
-            showMessage(message, 'success');
-            closeStatusModal();
-            loadOrders();
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'api_update_order_status.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            if (json.success) {
+                showMessage(json.message, 'success');
+                closeStatusModal();
+                loadOrders();
+            } else {
+                showMessage(json.message || 'Error updating status', 'error');
+            }
         } else {
-            showMessage(message, 'error');
+            showMessage('Error updating status', 'error');
         }
-    }, params);
+    };
+    xhr.onerror = function() {
+        showMessage('Network error. Try again.', 'error');
+    };
+    xhr.send(formData);
 }
 
 // Close modal when clicking outside
@@ -635,7 +587,6 @@ window.onclick = function(event) {
 
 // Load orders on page load
 window.addEventListener('DOMContentLoaded', function() {
-    detectUserType();
     loadOrders();
 });
 </script>

@@ -364,47 +364,54 @@ function submitOrder(event) {
     formData.append('delivery_address', deliveryAddress);
     formData.append('notes', notes);
 
-    fetch('api_place_order.php', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin'
-    }).then(function(res) {
-        return res.json();
-    }).then(function(json) {
-        if (json.success) {
-            showMessage('Order placed successfully! Order ID: ' + json.order_id, 'success');
-            closeOrderModal();
-        } else {
-            showMessage(json.message || 'Failed to place order', 'error');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'api_place_order.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var xmlDoc = xhr.responseXML;
+            var success = xmlDoc.getElementsByTagName('success')[0].textContent;
+            if (success === 'true') {
+                var orderId = xmlDoc.getElementsByTagName('order_id')[0].textContent;
+                showMessage('Order placed successfully! Order ID: ' + orderId, 'success');
+                closeOrderModal();
+            } else {
+                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+                showMessage(msg || 'Failed to place order', 'error');
+            }
         }
-    }).catch(function(err) {
+    };
+    xhr.onerror = function() {
         showMessage('Network error. Try again.', 'error');
-    });
+    };
+    xhr.send(formData);
 }
 
 function removeFromSaved(cropId, btn) {
     var formData = new FormData();
     formData.append('crop_id', cropId);
 
-    fetch('api_toggle_saved.php', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin'
-    }).then(function(res) {
-        return res.json();
-    }).then(function(json) {
-        if (json.success) {
-            showMessage('Removed from saved items', 'success');
-            btn.closest('.card').style.opacity = '0.5';
-            setTimeout(function() {
-                btn.closest('.card').remove();
-            }, 500);
-        } else {
-            showMessage(json.message || 'Error removing item', 'error');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'api_toggle_saved.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var xmlDoc = xhr.responseXML;
+            var success = xmlDoc.getElementsByTagName('success')[0].textContent;
+            if (success === 'true') {
+                showMessage('Removed from saved items', 'success');
+                btn.closest('.card').style.opacity = '0.5';
+                setTimeout(function() {
+                    btn.closest('.card').remove();
+                }, 500);
+            } else {
+                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+                showMessage(msg || 'Error removing item', 'error');
+            }
         }
-    }).catch(function(err) {
+    };
+    xhr.onerror = function() {
         showMessage('Network error. Try again.', 'error');
-    });
+    };
+    xhr.send(formData);
 }
 
 window.onclick = function(event) {

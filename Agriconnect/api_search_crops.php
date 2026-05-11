@@ -1,6 +1,6 @@
 <?php
 session_start();
-header('Content-Type: application/xml');
+header('Content-Type: application/xml; charset=utf-8');
 
 require 'db.php';
 
@@ -14,8 +14,6 @@ if (empty($search_query)) {
     echo $response->asXML();
     exit();
 }
-
-$response = new SimpleXMLElement('<?xml version="1.0"?><response/>');
 
 // Farmer searches only their own crops
 if ($_SESSION['usertype'] === 'farmer') {
@@ -39,6 +37,7 @@ if ($_SESSION['usertype'] === 'farmer') {
 }
 
 if (!$stmt->execute()) {
+    $response = new SimpleXMLElement('<?xml version="1.0"?><response/>');
     $response->addChild('success', 'false');
     $response->addChild('message', 'Database error: ' . $conn->error);
     echo $response->asXML();
@@ -46,6 +45,7 @@ if (!$stmt->execute()) {
 }
 
 $result = $stmt->get_result();
+$response = new SimpleXMLElement('<?xml version="1.0"?><response/>');
 $response->addChild('success', 'true');
 $cropsElement = $response->addChild('crops');
 

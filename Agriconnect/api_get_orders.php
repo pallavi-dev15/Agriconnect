@@ -1,6 +1,6 @@
 <?php
 session_start();
-header('Content-Type: application/xml');
+header('Content-Type: application/xml; charset=utf-8');
 
 require 'db.php';
 

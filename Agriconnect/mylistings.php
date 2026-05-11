@@ -271,23 +271,29 @@ document.getElementById('updateForm').addEventListener('submit', function(e) {
     formData.append('location', document.getElementById('update_location').value);
     formData.append('description', document.getElementById('update_description').value);
 
-    fetch('mylistings.php', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin'
-    }).then(function(res) {
-        return res.json();
-    }).then(function(json) {
-        if (json.success) {
-            alert(json.message);
-            closeUpdateModal();
-            location.reload();
-        } else {
-            alert(json.message || 'Error updating crop');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'mylistings.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var xmlDoc = xhr.responseXML;
+            var success = xmlDoc.getElementsByTagName('success')[0].textContent;
+            if (success === 'true') {
+                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+                alert(msg);
+                closeUpdateModal();
+                setTimeout(function() {
+                    location.reload();
+                }, 100);
+            } else {
+                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+                alert(msg || 'Error updating crop');
+            }
         }
-    }).catch(function() {
+    };
+    xhr.onerror = function() {
         alert('Network error. Try again.');
-    });
+    };
+    xhr.send(formData);
 });
 
 window.onclick = function(event) {

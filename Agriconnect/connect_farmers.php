@@ -115,34 +115,37 @@ document.getElementById('messageForm')?.addEventListener('submit', function(e) {
     formData.append('farmer_id', farmer);
     formData.append('message', message);
 
-    fetch('api_send_message.php', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin'
-    }).then(function(res) {
-        return res.json();
-    }).then(function(json) {
-        msgBox.style.display = 'block';
-        if (json.success) {
-            msgBox.style.background = '#d4edda';
-            msgBox.style.border = '1px solid #c3e6cb';
-            msgBox.style.color = '#155724';
-            msgBox.textContent = json.message || 'Message sent.';
-            document.getElementById('message').value = '';
-            document.getElementById('farmer_id').selectedIndex = 0;
-        } else {
-            msgBox.style.background = '#ffe8e8';
-            msgBox.style.border = '1px solid #f5c6cb';
-            msgBox.style.color = '#7a1b1b';
-            msgBox.textContent = json.message || 'Failed to send message.';
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'api_send_message.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var xmlDoc = xhr.responseXML;
+            var success = xmlDoc.getElementsByTagName('success')[0].textContent;
+            var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+            msgBox.style.display = 'block';
+            if (success === 'true') {
+                msgBox.style.background = '#d4edda';
+                msgBox.style.border = '1px solid #c3e6cb';
+                msgBox.style.color = '#155724';
+                msgBox.textContent = msg || 'Message sent.';
+                document.getElementById('message').value = '';
+                document.getElementById('farmer_id').selectedIndex = 0;
+            } else {
+                msgBox.style.background = '#ffe8e8';
+                msgBox.style.border = '1px solid #f5c6cb';
+                msgBox.style.color = '#7a1b1b';
+                msgBox.textContent = msg || 'Failed to send message.';
+            }
         }
-    }).catch(function(err) {
+    };
+    xhr.onerror = function() {
         msgBox.style.display = 'block';
         msgBox.style.background = '#ffe8e8';
         msgBox.style.border = '1px solid #f5c6cb';
         msgBox.style.color = '#7a1b1b';
         msgBox.textContent = 'Network error. Try again later.';
-    });
+    };
+    xhr.send(formData);
 });
 </script>
 </body>

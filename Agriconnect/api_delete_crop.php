@@ -1,6 +1,6 @@
 <?php
 session_start();
-header('Content-Type: application/xml');
+header('Content-Type: application/xml; charset=utf-8');
 
 // Check if user is logged in and is a farmer
 if (!isset($_SESSION['id']) || $_SESSION['usertype'] !== 'farmer') {

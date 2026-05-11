@@ -716,29 +716,33 @@ function toggleSaveItem(cropId, btn) {
     var formData = new FormData();
     formData.append('crop_id', cropId);
 
-    fetch('api_toggle_saved.php', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin'
-    }).then(function(res) {
-        return res.json();
-    }).then(function(json) {
-        if (json.success) {
-            if (json.saved) {
-                btn.style.background = '#dc2626';
-                btn.textContent = '❤ Saved';
-                showMessage('Added to saved items', 'success');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'api_toggle_saved.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var xmlDoc = xhr.responseXML;
+            var success = xmlDoc.getElementsByTagName('success')[0].textContent;
+            if (success === 'true') {
+                var saved = xmlDoc.getElementsByTagName('saved')[0].textContent;
+                if (saved === 'true') {
+                    btn.style.background = '#dc2626';
+                    btn.textContent = '❤ Saved';
+                    showMessage('Added to saved items', 'success');
+                } else {
+                    btn.style.background = '#f59e0b';
+                    btn.textContent = '♥ Save';
+                    showMessage('Removed from saved items', 'success');
+                }
             } else {
-                btn.style.background = '#f59e0b';
-                btn.textContent = '♥ Save';
-                showMessage('Removed from saved items', 'success');
+                var msg = xmlDoc.getElementsByTagName('message')[0].textContent;
+                showMessage(msg || 'Error toggling save', 'error');
             }
-        } else {
-            showMessage(json.message || 'Error toggling save', 'error');
         }
-    }).catch(function(err) {
+    };
+    xhr.onerror = function() {
         showMessage('Network error. Try again.', 'error');
-    });
+    };
+    xhr.send(formData);
 }
 </script>
 

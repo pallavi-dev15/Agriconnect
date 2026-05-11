@@ -1,6 +1,6 @@
 <?php
 session_start();
-header('Content-Type: application/xml');
+header('Content-Type: application/xml; charset=utf-8');
 
 require 'db.php';
 
@@ -34,7 +34,6 @@ if (!$stmt->execute()) {
 }
 
 $result = $stmt->get_result();
-
 $response = new SimpleXMLElement('<?xml version="1.0"?><response/>');
 $response->addChild('success', 'true');
 $cropsElement = $response->addChild('crops');
