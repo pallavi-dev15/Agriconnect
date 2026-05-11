@@ -20,7 +20,26 @@ $quantity = $_POST['quantity'] ?? 0;
 $grade = $_POST['grade'] ?? '';
 $location = $_POST['location'] ?? '';
 $description = $_POST['description'] ?? '';
-$image_url = $_POST['image_url'] ?? '';
+$image_url = '';
+
+if (!empty($_FILES['image']['name'])) {
+    $uploadDir = __DIR__ . '/uploads/crops/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+    $imageInfo = pathinfo($_FILES['image']['name']);
+    $extension = strtolower($imageInfo['extension'] ?? '');
+    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+    if (in_array($extension, $allowed, true)) {
+        $targetName = uniqid('crop_', true) . '.' . $extension;
+        $targetFile = $uploadDir . $targetName;
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+            $image_url = 'uploads/crops/' . $targetName;
+        }
+    }
+} else {
+    $image_url = $_POST['image_url'] ?? '';
+}
 
 // Validate input
 if (empty($crop_name) || empty($price) || empty($quantity)) {
