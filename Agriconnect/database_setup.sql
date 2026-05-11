@@ -41,3 +41,25 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (crop_id) REFERENCES crops(id) ON DELETE CASCADE
 );
+
+-- Saved items / wishlist for buyers
+CREATE TABLE IF NOT EXISTS saved_items (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    buyer_id INT NOT NULL,
+    crop_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (crop_id) REFERENCES crops(id) ON DELETE CASCADE
+);
+
+-- Messages / feedback from buyers to farmers
+CREATE TABLE IF NOT EXISTS messages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    sender_id INT NOT NULL,
+    farmer_id INT NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (farmer_id) REFERENCES users(id) ON DELETE CASCADE
+);

@@ -47,10 +47,9 @@ $usertype = $_SESSION['usertype'];
             <li><a href="marketplace.php">Browse Products</a></li>
             <li><a href="myorders.php">My Orders</a></li>
         <?php endif; ?>
-        <li><a href="about.html">About</a></li>
-        <li><a href="weather.html">Weather</a></li>
-        <li><a href="blog.html">Expert Tips</a></li>
-        <li><a href="contact.html">Contact</a></li>
+        <?php if ($usertype === 'farmer'): ?>
+           
+        <?php endif; ?>
         <li><a href="logout.php" style="background-color: #d9534f; border-radius: 999px; padding: 0.45rem 0.8rem;">Logout</a></li>
     </ul>
 </nav>
@@ -124,25 +123,17 @@ $usertype = $_SESSION['usertype'];
             <p>View order history and track current deliveries.</p>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="window.location.href='saved_items.php'" style="cursor: pointer;">
             <h3>❤️ Saved Items</h3>
             <p>Keep your favorite products for quick access.</p>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="window.location.href='connect_farmers.php'" style="cursor: pointer;">
             <h3>👨‍🌾 Connect with Farmers</h3>
             <p>Direct messaging with farmers for bulk orders and inquiries.</p>
         </div>
 
-        <div class="card">
-            <h3>⭐ Reviews & Ratings</h3>
-            <p>Share your feedback and read other buyers' experiences.</p>
-        </div>
-
-        <div class="card">
-            <h3>💵 Payment Methods</h3>
-            <p>Manage your payment options and transaction history.</p>
-        </div>
+        <!-- Reviews card removed per request -->
     </section>
 
 <?php endif; ?>

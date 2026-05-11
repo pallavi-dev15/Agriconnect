@@ -579,6 +579,7 @@ function createCropCard(cropXML) {
             <div class="crop-description">${description}</div>
             <div class="crop-actions">
                 <button class="btn btn-primary" onclick="openOrderModal(${id}, '${name}', ${price}, ${quantity})">Order Now</button>
+                <button class="btn btn-secondary" onclick="toggleSaveItem(${id}, this)" style="background-color:#f59e0b;">♥ Save</button>
             </div>
         </div>
     `;
@@ -709,6 +710,36 @@ window.onclick = function(event) {
         closeOrderModal();
     }
 };
+
+// Toggle save item (AJAX)
+function toggleSaveItem(cropId, btn) {
+    var formData = new FormData();
+    formData.append('crop_id', cropId);
+
+    fetch('api_toggle_saved.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    }).then(function(res) {
+        return res.json();
+    }).then(function(json) {
+        if (json.success) {
+            if (json.saved) {
+                btn.style.background = '#dc2626';
+                btn.textContent = '❤ Saved';
+                showMessage('Added to saved items', 'success');
+            } else {
+                btn.style.background = '#f59e0b';
+                btn.textContent = '♥ Save';
+                showMessage('Removed from saved items', 'success');
+            }
+        } else {
+            showMessage(json.message || 'Error toggling save', 'error');
+        }
+    }).catch(function(err) {
+        showMessage('Network error. Try again.', 'error');
+    });
+}
 </script>
 
 </body>
