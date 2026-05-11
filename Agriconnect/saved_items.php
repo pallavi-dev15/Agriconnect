@@ -29,6 +29,132 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['usertype'])) {
         footer {
             flex-shrink: 0;
         }
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .crop-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .crop-actions .btn {
+            flex: 1;
+            margin: 0;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #0b7dda;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        .close-btn {
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        .close-btn:hover {
+            color: #000;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .price-display {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2E7D32;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +217,7 @@ if (empty($saved) && !empty($_SESSION['saved_items']) && is_array($_SESSION['sav
 ?>
 
 <main style="padding:0; max-width:1100px; margin:0 auto;">
+    <div id="message" style="display: none; margin-bottom: 15px;"></div>
     <?php if (empty($saved)): ?>
         <div class="empty-state" style="padding:1rem; background:#fff; border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,0.05);">
             <h3>No saved items</h3>
@@ -111,7 +238,10 @@ if (empty($saved) && !empty($_SESSION['saved_items']) && is_array($_SESSION['sav
                     <div style="padding:1rem;">
                         <h3 style="margin:0 0 0.5rem; color:#1f4f2a"><?php echo htmlspecialchars($item['crop_name']); ?></h3>
                         <p style="margin:0 0 0.75rem; color:#455d4d;">Price: ₹<?php echo htmlspecialchars($item['price']); ?> / kg</p>
-                        <a href="marketplace.php" class="btn">View in Marketplace</a>
+                        <div class="crop-actions">
+                            <button class="btn btn-primary" onclick="openOrderModal(<?php echo (int)$item['crop_id']; ?>, '<?php echo htmlspecialchars($item['crop_name']); ?>', <?php echo (float)$item['price']; ?>, 100)">Order</button>
+                            <button class="btn btn-secondary" onclick="removeFromSaved(<?php echo (int)$item['crop_id']; ?>, this)" style="background-color:#dc2626;">Remove</button>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -122,5 +252,168 @@ if (empty($saved) && !empty($_SESSION['saved_items']) && is_array($_SESSION['sav
 </div>
 
 <footer>© 2026 Smart AgriConnect</footer>
+
+<!-- Order Modal -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Place Order</h2>
+            <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+        </div>
+        <form id="orderForm" onsubmit="submitOrder(event)">
+            <div class="form-group">
+                <label>Crop Name</label>
+                <input type="text" id="orderCropName" disabled>
+            </div>
+
+            <div class="form-group">
+                <label>Price per Unit</label>
+                <input type="text" id="orderCropPrice" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="orderQuantity">Order Quantity (kg) *</label>
+                <input type="number" id="orderQuantity" required>
+            </div>
+
+            <div class="form-group" id="totalPriceGroup" style="display: none;">
+                <label>Total Price</label>
+                <div class="price-display" id="totalPrice">₹0</div>
+            </div>
+
+            <div class="form-group">
+                <label for="deliveryAddress">Delivery Address *</label>
+                <textarea id="deliveryAddress" rows="3" placeholder="Enter your delivery address" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="orderNotes">Special Notes</label>
+                <textarea id="orderNotes" rows="2" placeholder="Any special instructions for the farmer..."></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Place Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+var currentOrderData = {};
+
+function showMessage(text, type = 'success') {
+    var msgDiv = document.getElementById('message');
+    msgDiv.textContent = text;
+    msgDiv.className = 'message ' + type;
+    msgDiv.style.display = 'block';
+    
+    setTimeout(function() {
+        msgDiv.style.display = 'none';
+    }, 5000);
+}
+
+function openOrderModal(cropId, cropName, price, quantity) {
+    document.getElementById('orderCropName').value = cropName;
+    document.getElementById('orderCropPrice').value = '₹' + price + '/kg';
+    document.getElementById('orderQuantity').value = '';
+    document.getElementById('deliveryAddress').value = '';
+    document.getElementById('orderNotes').value = '';
+    
+    currentOrderData = {
+        cropId: cropId,
+        price: price,
+        maxQuantity: quantity
+    };
+    
+    document.getElementById('orderModal').classList.add('active');
+}
+
+function closeOrderModal() {
+    document.getElementById('orderModal').classList.remove('active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('orderQuantity').addEventListener('input', function() {
+        var qty = parseFloat(this.value);
+        if (qty > 0 && currentOrderData.price) {
+            var total = qty * currentOrderData.price;
+            document.getElementById('totalPrice').textContent = '₹' + total.toFixed(2);
+            document.getElementById('totalPriceGroup').style.display = 'block';
+        } else {
+            document.getElementById('totalPriceGroup').style.display = 'none';
+        }
+    });
+});
+
+function submitOrder(event) {
+    event.preventDefault();
+
+    var quantity = document.getElementById('orderQuantity').value;
+    var deliveryAddress = document.getElementById('deliveryAddress').value;
+    var notes = document.getElementById('orderNotes').value;
+
+    if (quantity > currentOrderData.maxQuantity) {
+        showMessage('Quantity exceeds available stock', 'error');
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('crop_id', currentOrderData.cropId);
+    formData.append('quantity', quantity);
+    formData.append('delivery_address', deliveryAddress);
+    formData.append('notes', notes);
+
+    fetch('api_place_order.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    }).then(function(res) {
+        return res.json();
+    }).then(function(json) {
+        if (json.success) {
+            showMessage('Order placed successfully! Order ID: ' + json.order_id, 'success');
+            closeOrderModal();
+        } else {
+            showMessage(json.message || 'Failed to place order', 'error');
+        }
+    }).catch(function(err) {
+        showMessage('Network error. Try again.', 'error');
+    });
+}
+
+function removeFromSaved(cropId, btn) {
+    var formData = new FormData();
+    formData.append('crop_id', cropId);
+
+    fetch('api_toggle_saved.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    }).then(function(res) {
+        return res.json();
+    }).then(function(json) {
+        if (json.success) {
+            showMessage('Removed from saved items', 'success');
+            btn.closest('.card').style.opacity = '0.5';
+            setTimeout(function() {
+                btn.closest('.card').remove();
+            }, 500);
+        } else {
+            showMessage(json.message || 'Error removing item', 'error');
+        }
+    }).catch(function(err) {
+        showMessage('Network error. Try again.', 'error');
+    });
+}
+
+window.onclick = function(event) {
+    var modal = document.getElementById('orderModal');
+    if (event.target === modal) {
+        closeOrderModal();
+    }
+};
+</script>
+
 </body>
 </html>
