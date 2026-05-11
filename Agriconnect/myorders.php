@@ -1,3 +1,7 @@
+<?php
+require 'session_protect.php';
+ensure_logged_in();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

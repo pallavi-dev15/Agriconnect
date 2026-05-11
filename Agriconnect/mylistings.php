@@ -1,11 +1,9 @@
 ﻿<?php
-session_start();
+require 'session_protect.php';
 require 'db.php';
+ensure_farmer();
 
-if (!isset($_SESSION['id']) || $_SESSION['usertype'] !== 'farmer') {
-    header('Location: login.php');
-    exit();
-}
+$farmer_id = $_SESSION['id'];
 
 $farmer_id = $_SESSION['id'];
 $message = '';

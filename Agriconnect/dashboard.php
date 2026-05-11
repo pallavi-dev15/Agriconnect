@@ -1,11 +1,6 @@
 <?php
-session_start();
-
-// Check if user logged in
-if (!isset($_SESSION['username']) || !isset($_SESSION['usertype'])) {
-    header("Location: login.php");
-    exit();
-}
+require 'session_protect.php';
+ensure_logged_in();
 
 $usertype = $_SESSION['usertype'];
 ?>

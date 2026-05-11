@@ -1,9 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['username']) || !isset($_SESSION['usertype'])) {
-    header("Location: login.php");
-    exit();
-}
+require 'session_protect.php';
+ensure_logged_in();
 ?>
 <!DOCTYPE html>
 <html>
