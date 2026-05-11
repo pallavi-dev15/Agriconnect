@@ -55,6 +55,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $check->close();
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $crop_id = intval($_POST['crop_id'] ?? 0);
+    $crop_name = trim($_POST['crop_name'] ?? '');
+    $price = floatval($_POST['price'] ?? 0);
+    $quantity = intval($_POST['quantity'] ?? 0);
+    $grade = trim($_POST['grade'] ?? '');
+    $location = trim($_POST['location'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+
+    if ($crop_id <= 0 || $crop_name === '' || $price <= 0 || $quantity <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid input']);
+        exit();
+    }
+
+    $check = $conn->prepare('SELECT farmer_id FROM crops WHERE id = ?');
+    $check->bind_param('i', $crop_id);
+    $check->execute();
+    $result = $check->get_result();
+    $row = $result->fetch_assoc();
+    $check->close();
+
+    if (!$row || (int)$row['farmer_id'] !== (int)$farmer_id) {
+        echo json_encode(['success' => false, 'message' => 'Crop not found or unauthorized']);
+        exit();
+    }
+
+    $stmt = $conn->prepare('UPDATE crops SET crop_name = ?, price = ?, quantity = ?, grade = ?, location = ?, description = ? WHERE id = ? AND farmer_id = ?');
+    $stmt->bind_param('sdisssii', $crop_name, $price, $quantity, $grade, $location, $description, $crop_id, $farmer_id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Crop updated successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to update crop']);
+    }
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
 $stmt = $conn->prepare('SELECT id, crop_name, price, quantity, grade, location, description FROM crops WHERE farmer_id = ? ORDER BY created_at DESC');
 $stmt->bind_param('i', $farmer_id);
 $stmt->execute();
@@ -221,6 +262,7 @@ document.getElementById('updateForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     var formData = new FormData();
+    formData.append('action', 'update');
     formData.append('crop_id', document.getElementById('update_crop_id').value);
     formData.append('crop_name', document.getElementById('update_crop_name').value);
     formData.append('price', document.getElementById('update_price').value);
@@ -229,7 +271,7 @@ document.getElementById('updateForm').addEventListener('submit', function(e) {
     formData.append('location', document.getElementById('update_location').value);
     formData.append('description', document.getElementById('update_description').value);
 
-    fetch('api_update_crop.php', {
+    fetch('mylistings.php', {
         method: 'POST',
         body: formData,
         credentials: 'same-origin'
