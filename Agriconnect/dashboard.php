@@ -46,6 +46,7 @@ $usertype = $_SESSION['usertype'];
         <?php else: ?>
             <li><a href="marketplace.php">Browse Products</a></li>
             <li><a href="myorders.php">My Orders</a></li>
+            <li><a href="connect_farmers.php">Contact</a></li>
         <?php endif; ?>
         <?php if ($usertype === 'farmer'): ?>
            
