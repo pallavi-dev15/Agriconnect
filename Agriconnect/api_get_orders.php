@@ -9,14 +9,17 @@ $response = new SimpleXMLElement('<?xml version="1.0"?><response/>');
 
 if ($_SESSION['usertype'] === 'farmer') {
     // Farmer sees orders from buyers
-    $farmer_id = $_SESSION['id'];
-    $stmt = $conn->prepare("SELECT o.id, o.crop_id, c.crop_name, o.quantity, o.total_price, 
-                                   o.order_status, o.order_date, o.delivery_address, o.notes
-                            FROM orders o 
-                            JOIN crops c ON o.crop_id = c.id
-                            WHERE o.farmer_id = ? 
-                            ORDER BY o.order_date DESC");
-    $stmt->bind_param("i", $farmer_id);
+        $farmer_id = $_SESSION['id'];
+        // Include buyer information so farmers can see customer name
+        $stmt = $conn->prepare("SELECT o.id, o.crop_id, c.crop_name, o.quantity, o.total_price, 
+                        o.order_status, o.order_date, o.delivery_address, o.notes,
+                        o.buyer_id, u.username AS buyer_name
+                    FROM orders o 
+                    JOIN crops c ON o.crop_id = c.id
+                    JOIN users u ON o.buyer_id = u.id
+                    WHERE o.farmer_id = ? 
+                    ORDER BY o.order_date DESC");
+        $stmt->bind_param("i", $farmer_id);
 } else if ($_SESSION['usertype'] === 'buyer') {
     // Buyer sees their own orders
     $buyer_id = $_SESSION['id'];

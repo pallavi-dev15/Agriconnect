@@ -484,6 +484,7 @@ function createOrderElement(orderXML) {
     var status = orderXML.getElementsByTagName('order_status')[0].textContent;
     var orderDate = orderXML.getElementsByTagName('order_date')[0].textContent;
     var deliveryAddress = orderXML.getElementsByTagName('delivery_address')[0].textContent;
+    var buyerNameNode = orderXML.getElementsByTagName('buyer_name')[0];
     var farmerNameNode = orderXML.getElementsByTagName('farmer_name')[0];
     var notesNode = orderXML.getElementsByTagName('notes')[0];
 
@@ -513,6 +514,13 @@ function createOrderElement(orderXML) {
                       '<div class="detail-value">' + new Date(orderDate).toLocaleDateString() + '</div>' +
                       '</div>';
 
+    if (buyerNameNode) {
+        detailsHTML += '<div class="detail-item">' +
+                       '<div class="detail-label">Customer</div>' +
+                       '<div class="detail-value">' + buyerNameNode.textContent + '</div>' +
+                       '</div>';
+    }
+
     if (farmerNameNode) {
         detailsHTML += '<div class="detail-item">' +
                        '<div class="detail-label">Farmer</div>' +
@@ -533,7 +541,8 @@ function createOrderElement(orderXML) {
 
     var actionsHTML = '<div class="order-actions">';
     
-    if (!farmerNameNode) {
+    // If buyer_name exists, this is the farmer view — allow status updates
+    if (buyerNameNode) {
         actionsHTML += '<button class="btn btn-secondary" onclick="openStatusModal(' + id + ')">Update Status</button>';
     }
     
